@@ -1,38 +1,51 @@
 ﻿using System;
 using System.Text;
 using System.Runtime.CompilerServices;
+using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FileFolderParser
 {
     class Program
     {
-        const string DIRNAME = "D:\\A\\C Sharp"; // Specifying the path to the dir
-        const string FILE_NAME = "\\Test.txt";
         static void Main(string[] args)
         {
-            List<string> folders = GetListFoldes();
+            Console.Write("Enter path to folder: ");
+            string? folder_path = Console.ReadLine(); // Specifying the path to the dir, for example: D:\\A\\C Sharp\\
+            Console.Write("Enter the file name to store a text: ");
+            string? file_name = Console.ReadLine(); // Specifyinng the name of the file
+
+
+            Console.Write("Enter path to file: ");
+            string? file_path = Console.ReadLine(); // Specifying the name of the file to reading, for example: D:\\A\\C Sharp\\test_x.txt
+            //string? file_path = "D:\\A\\C Sharp\\test_x.txt";
+            Task<string> text = ReadFile(file_path);
+            Console.WriteLine(text);
+
+
+            List<string> folders = GetListFoldes(folder_path);
             foreach (string folder in folders)
             {
                 Console.WriteLine();
                 Console.Write("Folder: ");
                 Console.WriteLine(folder);
-                SaveTextToFile("Folder: " + folder + "\n", DIRNAME + FILE_NAME);
+                SaveTextToFile("Folder: " + folder + "\n", folder_path + file_name);
 
                 Console.WriteLine("Files: ");
                 List<string> files = GetListFiles(folder);
                 foreach (string file in files) // Parsing the files into folder
                 {
                     Console.WriteLine($"      {file}");
-                    SaveTextToFile("Files:\n" + "      " + file + "\n", DIRNAME + FILE_NAME);
+                    SaveTextToFile("Files:\n" + "      " + file + "\n", folder_path + file_name);
                 }
 
             }
-            Console.ReadLine();
+            Console.ReadKey();
         }
 
-        static List<string> GetListFoldes() // return the list of the folders
+        static List<string> GetListFoldes(string dirname) // return the list of the folders
         {
-            var directory = new DirectoryInfo(DIRNAME);
+            var directory = new DirectoryInfo(dirname);
             List<string> paths = new List<string>();
             if (directory.Exists)
             {
@@ -65,6 +78,15 @@ namespace FileFolderParser
                 byte[] buffer = Encoding.Default.GetBytes(text);
                 await fstream.WriteAsync(buffer, 0, buffer.Length);
                 Console.WriteLine("The text was written to a file.");
+            }
+        }
+        static async Task<string> ReadFile(string path) // Reading the specified file
+        {
+            using (StreamReader reader = new StreamReader(path))
+            {
+                string text = await reader.ReadToEndAsync();
+                Console.WriteLine(text);
+                return text;
             }
         }
     }
