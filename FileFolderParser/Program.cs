@@ -14,32 +14,16 @@ namespace FileFolderParser
             string? folder_path = Console.ReadLine(); // Specifying the path to the dir, for example: D:\\A\\C Sharp\\
             Console.Write("Enter the file name to store a text: ");
             string? file_name = Console.ReadLine(); // Specifyinng the name of the file
-
-
             Console.Write("Enter path to file: ");
             string? file_path = Console.ReadLine(); // Specifying the name of the file to reading, for example: D:\\A\\C Sharp\\test_x.txt
-            //string? file_path = "D:\\A\\C Sharp\\test_x.txt";
-            Task<string> text = ReadFile(file_path);
+
+            // Print the text from specified file
+            Task<string> text = ReadFile(file_path); 
             Console.WriteLine(text);
 
+            // Parse the folders and files
+            ParserFolders(folder_path, file_name);
 
-            List<string> folders = GetListFoldes(folder_path);
-            foreach (string folder in folders)
-            {
-                Console.WriteLine();
-                Console.Write("Folder: ");
-                Console.WriteLine(folder);
-                SaveTextToFile("Folder: " + folder + "\n", folder_path + file_name);
-
-                Console.WriteLine("Files: ");
-                List<string> files = GetListFiles(folder);
-                foreach (string file in files) // Parsing the files into folder
-                {
-                    Console.WriteLine($"      {file}");
-                    SaveTextToFile("Files:\n" + "      " + file + "\n", folder_path + file_name);
-                }
-
-            }
             Console.ReadKey();
         }
 
@@ -71,6 +55,31 @@ namespace FileFolderParser
             }
             return got_files;
         }
+
+        static void ParserFolders(string folder_path, string file_name)
+        {
+            List<string> folders = GetListFoldes(folder_path);
+            foreach (string folder in folders)
+            {
+                Console.WriteLine();
+                Console.Write("Folder: ");
+                Console.WriteLine(folder);
+                SaveTextToFile("Folder: " + folder + "\n", folder_path + file_name);
+
+                ParserFiles(folder, folder_path, file_name);
+            }
+        }
+        static void ParserFiles(string folder, string folder_path, string file_name)
+        {
+            Console.WriteLine("Files: ");
+            List<string> files = GetListFiles(folder);
+            foreach (string file in files) // Parsing the files into folder
+            {
+                Console.WriteLine($"      {file}");
+                SaveTextToFile("Files:\n" + "      " + file + "\n", folder_path + file_name);
+            }
+        }
+
         static async void SaveTextToFile(string text, string path) // Save the text in txt file to the specify path
         {
             using (FileStream fstream = new FileStream(path, FileMode.Append))
