@@ -22,7 +22,7 @@ namespace FileFolderParser
             }
             return paths;
         }
-        static List<string> GetListFiles(string dirName) // return the list of the files
+        public static List<string> GetListFiles(string dirName) // return the list of the files
         {
             var directory = new DirectoryInfo(dirName);
             List<string> got_files = new List<string>();
